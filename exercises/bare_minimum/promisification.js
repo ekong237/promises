@@ -1,7 +1,7 @@
 /**
  * Create the promise returning `Async` suffixed versions of the functions below,
  * Promisify them if you can, otherwise roll your own promise returning function
- */ 
+ */
 
 var fs = require('fs');
 var request = require('request');
@@ -27,7 +27,22 @@ var getGitHubProfile = function(user, callback) {
   });
 };
 
-var getGitHubProfileAsync; // TODO
+var getGitHubProfileAsync = function(){
+  var options = {
+    url: 'https://api.github.com/users/' + user,
+    headers: { 'User-Agent': 'request' },
+    json: true  // will JSON.parse(body) for us
+  };
+  return new Promise ((resolve, reject) => {
+    request.get(options, (err, res, body)=>{
+      if (err){
+        reject(err);
+      } else if (body.message){
+        reject('Failed to get GitHub profile: ' + body.message);
+      }
+    });
+  });
+};
 
 
 // (2) Asyncronous token generation
@@ -45,7 +60,7 @@ var generateRandomTokenAsync; // TODO
 var readFileAndMakeItFunny = function(filePath, callback) {
   fs.readFile(filePath, 'utf8', function(err, file) {
     if (err) { return callback(err); }
-   
+
     var funnyFile = file.split('\n')
       .map(function(line) {
         return line + ' lol';
