@@ -27,7 +27,7 @@ var getGitHubProfile = function(user, callback) {
   });
 };
 
-var getGitHubProfileAsync = function(){
+var getGitHubProfileAsync = function(user){
   var options = {
     url: 'https://api.github.com/users/' + user,
     headers: { 'User-Agent': 'request' },
@@ -38,7 +38,9 @@ var getGitHubProfileAsync = function(){
       if (err){
         reject(err);
       } else if (body.message){
-        reject('Failed to get GitHub profile: ' + body.message);
+        reject(new Error('Failed to get GitHub profile: ' + body.message));
+      } else {
+        resolve(body)
       }
     });
   });
